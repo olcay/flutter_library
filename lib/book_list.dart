@@ -17,12 +17,30 @@ class _BookListState extends State<BookList> {
 
   _BookListState({this.shelf});
 
+  void _select(Choice choice) {
+      Navigator.pop(context, choice.title);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(shelf.title),
         backgroundColor: Colors.red[600],
+        actions: <Widget>[
+          // overflow menu
+          PopupMenuButton<Choice>(
+            onSelected: _select,
+            itemBuilder: (BuildContext context) {
+              return choices.map((Choice choice) {
+                return PopupMenuItem<Choice>(
+                  value: choice,
+                  child: Text(choice.title),
+                );
+              }).toList();
+            },
+          ),
+        ],
       ),
       body: ListView(
         children: shelf.books
@@ -39,3 +57,14 @@ class _BookListState extends State<BookList> {
     );
   }
 }
+
+class Choice {
+  const Choice({this.title});
+
+  final String title;
+}
+
+const List<Choice> choices = const <Choice>[
+  const Choice(title: 'Edit'),
+  const Choice(title: 'Delete'),
+];

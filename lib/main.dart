@@ -41,33 +41,34 @@ class _ShelfListState extends State<ShelfList> {
                 children: shelves
                     .map((shelf) => ShelfCard(
                         shelf: shelf,
-                        delete: () {
-                          setState(() {
-                            shelves.remove(shelf);
-                          });
-
-                          final snackBar = SnackBar(
-                            content: Text(shelf.title + ' is removed!'),
-                            action: SnackBarAction(
-                                label: 'Undo',
-                                onPressed: () {
-                                  // Some code to undo the change.
-                                  setState(() {
-                                    shelves.add(shelf);
-                                  });
-                                }),
-                          );
-
-                          // Find the Scaffold in the widget tree and use
-                          // it to show a SnackBar.
-                          Scaffold.of(context).showSnackBar(snackBar);
-                        },
-                        detail: () {
-                          Navigator.push(
+                        detail: () async {
+                          final result = await Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => BookList(shelf: shelf)),
                           );
+
+                          if (result == "Delete") {
+                            setState(() {
+                              shelves.remove(shelf);
+                            });
+
+                            final snackBar = SnackBar(
+                              content: Text(shelf.title + ' is removed!'),
+                              action: SnackBarAction(
+                                  label: 'Undo',
+                                  onPressed: () {
+                                    // Some code to undo the change.
+                                    setState(() {
+                                      shelves.add(shelf);
+                                    });
+                                  }),
+                            );
+
+                            // Find the Scaffold in the widget tree and use
+                            // it to show a SnackBar.
+                            Scaffold.of(context).showSnackBar(snackBar);
+                          }
                         }))
                     .toList(),
               )),
