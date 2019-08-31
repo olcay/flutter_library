@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kutuphane/book_list.dart';
 import 'package:kutuphane/shelf_add.dart';
+import 'package:kutuphane/shelf_edit.dart';
 import 'book.dart';
 import 'shelf.dart';
 import 'shelf_card.dart';
@@ -68,6 +69,13 @@ class _ShelfListState extends State<ShelfList> {
                             // Find the Scaffold in the widget tree and use
                             // it to show a SnackBar.
                             Scaffold.of(context).showSnackBar(snackBar);
+                          } else if (result == "Edit") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ShelfEdit(shelf: shelf)),
+                            );
                           }
                         }))
                     .toList(),

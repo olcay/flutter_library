@@ -2,18 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kutuphane/shelf.dart';
 
-class ShelfAdd extends StatefulWidget {
-  final List<Shelf> shelves;
+class ShelfEdit extends StatefulWidget {
+  final Shelf shelf;
 
-  ShelfAdd({this.shelves});
+  ShelfEdit({this.shelf});
 
   @override
-  _ShelfAddState createState() => _ShelfAddState(shelves: shelves);
+  _ShelfEditState createState() => _ShelfEditState(shelf: shelf);
 }
 
 // Create a corresponding State class.
 // This class holds data related to the form.
-class _ShelfAddState extends State<ShelfAdd> {
+class _ShelfEditState extends State<ShelfEdit> {
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
   //
@@ -21,19 +21,27 @@ class _ShelfAddState extends State<ShelfAdd> {
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
 
-  final List<Shelf> shelves;
+  final Shelf shelf;
 
-  _ShelfAddState({this.shelves});
+  _ShelfEditState({this.shelf});
 
-  final titleFieldController = TextEditingController();
-  final descriptionFieldController = TextEditingController();
+  TextEditingController _titleFieldController;
+  TextEditingController _descriptionFieldController;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleFieldController = new TextEditingController(text: shelf.title);
+    _descriptionFieldController =
+        new TextEditingController(text: shelf.description);
+  }
 
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
     return Scaffold(
       appBar: AppBar(
-        title: Text('New shelf'),
+        title: Text(shelf.title),
         backgroundColor: Colors.red[600],
       ),
       body: Form(
@@ -46,7 +54,7 @@ class _ShelfAddState extends State<ShelfAdd> {
               child: TextFormField(
                 autofocus: true,
                 decoration: InputDecoration(labelText: "Title"),
-                controller: titleFieldController,
+                controller: _titleFieldController,
                 validator: (value) {
                   if (value.isEmpty) {
                     return 'Please enter a title';
@@ -59,7 +67,7 @@ class _ShelfAddState extends State<ShelfAdd> {
               padding: const EdgeInsets.all(16.0),
               child: TextFormField(
                 decoration: InputDecoration(labelText: 'Description'),
-                controller: descriptionFieldController,
+                controller: _descriptionFieldController,
               ),
             ),
             Padding(
@@ -67,18 +75,15 @@ class _ShelfAddState extends State<ShelfAdd> {
               child: RaisedButton(
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
-
                     setState(() {
-                      shelves.add(Shelf(
-                          title: titleFieldController.text,
-                          description: descriptionFieldController.text,
-                          books: []));
+                      shelf.title = _titleFieldController.text;
+                      shelf.description = _descriptionFieldController.text;
                     });
 
                     Navigator.pop(context);
                   }
                 },
-                child: Text('Add'),
+                child: Text('Save'),
               ),
             ),
           ],
