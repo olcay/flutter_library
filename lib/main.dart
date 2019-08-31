@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:kutuphane/shelf_route.dart';
+import 'package:kutuphane/book_list.dart';
+import 'package:kutuphane/shelf_add.dart';
 import 'book.dart';
 import 'shelf.dart';
 import 'shelf_card.dart';
 
-void main() => runApp(MaterialApp(
-    home: ShelfList()
-));
+void main() => runApp(MaterialApp(home: ShelfList()));
 
 class ShelfList extends StatefulWidget {
   @override
@@ -14,14 +13,16 @@ class ShelfList extends StatefulWidget {
 }
 
 class _ShelfListState extends State<ShelfList> {
-
   List<Shelf> shelves = [
-    Shelf(title: 'Discworld Series', description: 'Terry Pratchett`e saygiyla', books: [
-      Book(title:"The Colour Of Magic", publisher:"Terry Pratchett"),
-      Book(title:"Mort", publisher:"Terry Prachet"),
-      Book(title:"Equal Rites", publisher:"Terry Prachet"),
-      Book(title:"The Light Fantastic", publisher:"Terry Prachet"),
-    ]),
+    Shelf(
+        title: 'Discworld Series',
+        description: 'Terry Pratchett`e saygiyla',
+        books: [
+          Book(title: "The Colour Of Magic", author: "Terry Pratchett"),
+          Book(title: "Mort", author: "Terry Prachet"),
+          Book(title: "Equal Rites", author: "Terry Prachet"),
+          Book(title: "The Light Fantastic", author: "Terry Prachet"),
+        ]),
     Shelf(title: 'Çilek Kitaplığı', description: 'Dev arsiv', books: []),
     Shelf(title: 'Español', description: 'Ispanyolca kitaplar', books: [])
   ];
@@ -33,51 +34,50 @@ class _ShelfListState extends State<ShelfList> {
       appBar: AppBar(
         title: Text('Shelves'),
         centerTitle: true,
-        backgroundColor: Colors.redAccent,
+        backgroundColor: Colors.orange[600],
       ),
       body: Builder(
           builder: (context) => ListView(
-          children: shelves.map((shelf) => ShelfCard(
-              shelf: shelf,
-              delete: () {
-                setState(() {
-                  shelves.remove(shelf);
-                });
+                children: shelves
+                    .map((shelf) => ShelfCard(
+                        shelf: shelf,
+                        delete: () {
+                          setState(() {
+                            shelves.remove(shelf);
+                          });
 
-                final snackBar = SnackBar(
-                  content: Text(shelf.title + ' is removed!'),
-                  action: SnackBarAction(
-                    label: 'Undo',
-                    onPressed: () {
-                      // Some code to undo the change.
-                      setState(() {
-                        shelves.add(shelf);
-                      });
-                    }
-                  ),
-                );
+                          final snackBar = SnackBar(
+                            content: Text(shelf.title + ' is removed!'),
+                            action: SnackBarAction(
+                                label: 'Undo',
+                                onPressed: () {
+                                  // Some code to undo the change.
+                                  setState(() {
+                                    shelves.add(shelf);
+                                  });
+                                }),
+                          );
 
-                // Find the Scaffold in the widget tree and use
-                // it to show a SnackBar.
-                Scaffold.of(context).showSnackBar(snackBar);
-              },
-              detail: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => BookList(shelf: shelf)),
-                );
-              }
-          )).toList(),
-        )
-      ),
+                          // Find the Scaffold in the widget tree and use
+                          // it to show a SnackBar.
+                          Scaffold.of(context).showSnackBar(snackBar);
+                        },
+                        detail: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => BookList(shelf: shelf)),
+                          );
+                        }))
+                    .toList(),
+              )),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.red[600],
+        backgroundColor: Colors.orange[600],
         onPressed: () {
-          setState(() {
-            shelves.add(
-                Shelf(title: 'Olcay Wilde', description: 'Demirden korksak', books: [])
-            );
-          });
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ShelfAdd(shelves: shelves)),
+          );
         },
         child: Icon(Icons.add),
       ),
@@ -92,7 +92,7 @@ class _ShelfListState extends State<ShelfList> {
             DrawerHeader(
               child: Text('Drawer Header'),
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.orange[600],
               ),
             ),
             ListTile(
@@ -119,8 +119,3 @@ class _ShelfListState extends State<ShelfList> {
     );
   }
 }
-
-
-
-
-

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'book.dart';
 
 class BookCard extends StatelessWidget {
-
   final Book book;
   final Function delete;
-  BookCard({ this.book, this.delete });
+
+  BookCard({this.book, this.delete});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class BookCard extends StatelessWidget {
               ),
               SizedBox(height: 6.0),
               Text(
-                book.publisher,
+                book.author,
                 style: TextStyle(
                   fontSize: 14.0,
                   color: Colors.grey[800],
@@ -39,7 +39,6 @@ class BookCard extends StatelessWidget {
               )
             ],
           ),
-        )
-    );
+        ));
   }
 }

@@ -1,7 +1,6 @@
 class Book {
-
   String title;
-  String publisher;
+  String author;
 
-  Book({ this.title, this.publisher });
+  Book({this.title, this.author});
 }
