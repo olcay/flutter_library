@@ -1,8 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:googleapis/books/v1.dart';
+import 'package:googleapis_auth/auth.dart';
+import 'package:googleapis_auth/auth_io.dart';
+import 'package:kutuphane/helper/secret_loader.dart';
 import 'package:kutuphane/shelf.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'book.dart';
+import 'entities/secret.dart';
 
 class BookAdd extends StatefulWidget {
   final Shelf shelf;
@@ -28,7 +33,7 @@ class _BookAddState extends State<BookAdd> {
   _BookAddState({this.shelf});
 
   final titleFieldController = TextEditingController();
-  final descriptionFieldController = TextEditingController();
+  final authorFieldController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +66,7 @@ class _BookAddState extends State<BookAdd> {
               padding: const EdgeInsets.all(16.0),
               child: TextFormField(
                 decoration: InputDecoration(labelText: 'Author'),
-                controller: descriptionFieldController,
+                controller: authorFieldController,
               ),
             ),
             Row(
@@ -74,7 +79,7 @@ class _BookAddState extends State<BookAdd> {
                         setState(() {
                           shelf.books.add(Book(
                               title: titleFieldController.text,
-                              author: descriptionFieldController.text));
+                              author: authorFieldController.text));
                         });
 
                         Navigator.pop(context);
@@ -87,7 +92,35 @@ class _BookAddState extends State<BookAdd> {
                   padding: const EdgeInsets.all(16.0),
                   child: RaisedButton(
                     onPressed: () async {
-                      titleFieldController.text = await FlutterBarcodeScanner.scanBarcode("#ff6666", "Cancel", false);
+                      Secret credentials = await SecretLoader().load();
+
+                      final _credentials =
+                          new ServiceAccountCredentials.fromJson(
+                              credentials.serviceAccountCredentials);
+
+                      const _SCOPES = const [BooksApi.BooksScope];
+
+                      String isbn13 = await FlutterBarcodeScanner.scanBarcode(
+                          "#fb8c00", "Cancel", false);
+
+                      clientViaServiceAccount(_credentials, _SCOPES)
+                          .then((httpClient) {
+                        var books = new BooksApi(httpClient);
+                        print("Results for $isbn13 ...");
+
+                        books.volumes
+                            .list(isbn13, printType: "books")
+                            .then((volumes) {
+                          titleFieldController.text =
+                              volumes.items.first.volumeInfo.title;
+                          authorFieldController.text =
+                              volumes.items.first.volumeInfo.authors.first;
+
+                          for (var book in volumes.items) {
+                            print(book.volumeInfo.title);
+                          }
+                        });
+                      });
                     },
                     child: Text('Scan'),
                   ),
