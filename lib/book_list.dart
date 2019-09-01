@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kutuphane/shelf.dart';
 
+import 'book_add.dart';
 import 'book_card.dart';
 
 class BookList extends StatefulWidget {
@@ -53,6 +54,16 @@ class _BookListState extends State<BookList> {
                   },
                 ))
             .toList(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.red[600],
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => BookAdd(shelf: shelf)),
+          );
+        },
+        child: Icon(Icons.add),
       ),
     );
   }
