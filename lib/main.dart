@@ -105,7 +105,7 @@ class _ShelfListState extends State<ShelfList> {
               ),
             ),
             ListTile(
-              title: Text('Profil'),
+              title: Text('Profile'),
               onTap: () {
                 // Update the state of the app
                 // ...
@@ -114,7 +114,7 @@ class _ShelfListState extends State<ShelfList> {
               },
             ),
             ListTile(
-              title: Text('Kapat'),
+              title: Text('Close'),
               onTap: () {
                 // Update the state of the app
                 // ...
