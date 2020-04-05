@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:kutuphane/book_list.dart';
 import 'package:kutuphane/shelf_add.dart';
@@ -5,12 +7,30 @@ import 'package:kutuphane/shelf_edit.dart';
 import 'book.dart';
 import 'shelf.dart';
 import 'shelf_card.dart';
+import 'package:http/http.dart' as http;
 
 void main() => runApp(MaterialApp(home: ShelfList()));
 
 class ShelfList extends StatefulWidget {
   @override
   _ShelfListState createState() => _ShelfListState();
+}
+
+Future<List<Shelf>> fetchAlbum() async {
+  final response = await http
+      .get('https://otomatikmuhendis-staging.herokuapp.com/api/shelves');
+
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    List<dynamic> list = json.decode(response.body);
+
+    return list.map((s) => Shelf.fromJson(s)).toList();
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to load album');
+  }
 }
 
 class _ShelfListState extends State<ShelfList> {
@@ -28,6 +48,14 @@ class _ShelfListState extends State<ShelfList> {
     Shelf(title: 'Español', description: 'Ispanyolca kitaplar', books: [])
   ];
 
+  Future<List<Shelf>> futureAlbum;
+
+  @override
+  void initState() {
+    super.initState();
+    futureAlbum = fetchAlbum();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,9 +65,13 @@ class _ShelfListState extends State<ShelfList> {
         centerTitle: true,
         backgroundColor: Colors.orange[600],
       ),
-      body: Builder(
-          builder: (context) => ListView(
-                children: shelves
+      body: Center(
+        child: FutureBuilder<List<Shelf>>(
+          future: futureAlbum,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView(
+                children: snapshot.data
                     .map((shelf) => ShelfCard(
                         shelf: shelf,
                         detail: () async {
@@ -79,7 +111,16 @@ class _ShelfListState extends State<ShelfList> {
                           }
                         }))
                     .toList(),
-              )),
+              );
+            } else if (snapshot.hasError) {
+              return Text("${snapshot.error}");
+            }
+
+            // By default, show a loading spinner.
+            return CircularProgressIndicator();
+          },
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.orange[600],
         onPressed: () {

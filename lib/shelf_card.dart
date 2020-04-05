@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'shelf.dart';
+import 'package:jiffy/jiffy.dart';
 
 class ShelfCard extends StatelessWidget {
   final Shelf shelf;
@@ -15,7 +16,7 @@ class ShelfCard extends StatelessWidget {
         child: ListTile(
           onTap: detail,
           title: Text(shelf.title),
-          subtitle: Text(shelf.description),
+          subtitle: Text("Last updated " + Jiffy(shelf.updateDate).fromNow()),
           trailing: Icon(Icons.keyboard_arrow_right),
         ));
   }
